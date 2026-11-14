@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChopNear | Food from kitchens, vendors, and chefs near you</title>
+<meta name="description" content="Order from nearby restaurants, street food vendors, and private chefs. Your money stays safe in escrow until your food arrives.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#fbf4e8;--ink:#231a14;--chili:#d6381f;--leaf:#1f7a4d;--saffron:#f2b134;--line:#e6d9c3;--mute:#6f6155;--white:#fff}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:Outfit,system-ui,sans-serif;line-height:1.55;font-size:17px}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--chili);outline-offset:3px}
+.wrap{max-width:980px;margin:0 auto;padding:0 18px}
+section{padding:46px 0}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:900;line-height:1.08}
+h1{font-size:clamp(2.4rem,9vw,4.6rem)}
+h2{font-size:clamp(1.7rem,5vw,2.4rem);margin-bottom:8px}
+.lead{color:var(--mute);max-width:48ch}
+.btn{display:inline-block;background:var(--chili);color:#fff;font:700 1rem Outfit,sans-serif;text-decoration:none;padding:12px 22px;border:0;border-radius:999px;cursor:pointer}
+.btn:hover{background:#b92d17}
+.btn.leaf{background:var(--leaf)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.card{background:var(--white);border:1px solid var(--line);border-radius:20px;padding:20px}
+
+header{background:var(--ink);color:var(--paper)}
+nav{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;max-width:980px;margin:0 auto}
+.logo{font-family:Fraunces,serif;font-weight:900;font-size:1.5rem;text-decoration:none}
+.logo b{color:var(--saffron)}
+.hero{padding:26px 0 46px}
+.hero p{color:#e9dcc6;max-width:40ch;font-size:1.15rem;margin:14px 0 22px}
+.find{display:grid;gap:10px;background:var(--paper);color:var(--ink);padding:14px;border-radius:20px;max-width:520px}
+.find label{font-weight:700;font-size:.9rem}
+.find select{font:inherit;padding:12px;border:2px solid var(--line);border-radius:12px;background:#fff;width:100%}
+.trust{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;font-size:.92rem;color:#e9dcc6}
+.trust span{border:1px solid #5a4a3d;border-radius:999px;padding:4px 12px}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.chips input{position:absolute;opacity:0;width:1px}
+.chips label{padding:9px 16px;border:2px solid var(--ink);border-radius:999px;cursor:pointer;font-weight:700;background:var(--white)}
+.chips input:checked+label{background:var(--ink);color:var(--paper)}
+.chips input:focus-visible+label{outline:3px solid var(--chili);outline-offset:2px}
+.list{display:grid;gap:14px}
+@media(min-width:760px){.list{grid-template-columns:1fr 1fr}}
+.item{display:grid;gap:6px}
+.item .top{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.tag{font-size:.78rem;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--saffron)}
+.tag.v{background:#cdeedd}.tag.c{background:#ffd9d1}
+.item h3{font-size:1.2rem}
+.meta{color:var(--mute);font-size:.92rem}
+.dish{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px dashed var(--line);padding-top:10px;margin-top:4px}
+.dish b{font-family:Fraunces,serif}
+.dish .btn{padding:8px 16px;font-size:.92rem}
+
+.order{background:var(--saffron)}
+#cartLines{margin:8px 0 12px}
+.row{display:flex;justify-content:space-between;gap:10px}
+.steps{list-style:none;padding:0;display:grid;gap:10px;margin:18px 0}
+.steps li{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.55);font-weight:500}
+.steps li i{width:30px;height:30px;border-radius:50%;background:#fff;display:grid;place-items:center;font-style:normal;font-weight:700;flex:none}
+.steps li.done{background:var(--leaf);color:#fff}
+.steps li.done i{background:#fff;color:var(--leaf)}
+.steps li.now{outline:3px solid var(--ink)}
+#escrow{display:none}
+.howto{display:grid;gap:14px;margin-top:20px}
+@media(min-width:760px){.howto{grid-template-columns:repeat(3,1fr)}}
+
+form{display:grid;gap:12px}
+label.f{font-weight:700;font-size:.95rem;display:grid;gap:5px}
+input,select,textarea{font:inherit;padding:12px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);width:100%}
+.two{display:grid;gap:22px}
+@media(min-width:820px){.two{grid-template-columns:1fr 1fr;align-items:start}}
+.dark{background:var(--ink);color:var(--paper)}
+.dark .lead{color:#e9dcc6}
+.dark .card{background:#33271f;border-color:#4a3a2e;color:var(--paper)}
+.dark input,.dark select{background:#fff}
+footer{padding:30px 0 100px;font-size:.95rem;color:var(--mute)}
+footer a{font-weight:700;color:var(--ink)}
+.sticky{position:fixed;left:16px;right:16px;bottom:max(16px,env(safe-area-inset-bottom));text-align:center;z-index:9;box-shadow:0 6px 18px rgba(35,26,20,.4)}
+@media(min-width:820px){.sticky{display:none}footer{padding-bottom:30px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+<style>#sell{display:none}</style>
+</head>
+<body>
+
+<header>
+  <nav><a class="logo" href="#top">Chop<b>Near</b></a><span><a href="index.html" style="margin-right:14px;text-decoration:none">Home</a><a class="btn" href="vendors.html" style="padding:8px 16px">Sell on ChopNear</a></span></nav>
+  <div class="hero wrap" id="top">
+    <h1>Hungry? Eat from what's closest.</h1>
+    <p>Restaurants, street vendors, and private chefs near you, in one place. Your money is held safely until your food arrives.</p>
+    <div class="find">
+      <label for="area">Which town are you in?</label>
+      <select id="area">
+        <option>Buea</option><option>Kumba</option><option>Limbe</option><option>Tiko</option>
+      </select>
+      <a class="btn" href="#near">See what's near me</a>
+    </div>
+    <div class="trust"><span>Escrow protected</span><span>Pay with MoMo or Orange Money</span><span>No shop needed to sell</span></div>
+  </div>
+</header>
+
+<main>
+<section id="near">
+  <div class="wrap">
+    <h2>Near <span id="areaName">Buea</span></h2>
+    <p class="lead">Sorted by distance within your town. The real app will use your phone's GPS.</p>
+    <div class="chips" role="radiogroup" aria-label="Filter">
+      <input type="radio" name="f" id="f0" value="all" checked><label for="f0">All</label>
+      <input type="radio" name="f" id="f1" value="Restaurant"><label for="f1">Restaurants</label>
+      <input type="radio" name="f" id="f2" value="vendor"><label for="f2">Vendors</label>
+      <input type="radio" name="f" id="f3" value="Private chef"><label for="f3">Private chefs</label>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+</section>
+
+<section class="order" id="order">
+  <div class="wrap two">
+    <div>
+      <h2>Your order</h2>
+      <div class="card">
+        <div id="cartLines">Your cart is empty. Add a dish above.</div>
+        <div class="row"><span>Delivery</span><b id="del">0 XAF</b></div>
+        <div class="row" style="font-size:1.2rem;margin:8px 0 14px"><b>Total</b><b id="tot">0 XAF</b></div>
+        <button class="btn leaf" id="pay" disabled>Pay into escrow</button>
+      </div>
+    </div>
+    <div id="escrowWrap">
+      <h2>Escrow tracker</h2>
+      <p class="lead">Pay now and ChopNear holds your money. The seller only gets paid when you confirm your food arrived.</p>
+      <ul class="steps" id="steps">
+        <li data-s="0"><i>1</i>Payment held in escrow</li>
+        <li data-s="1"><i>2</i>Seller is preparing your food</li>
+        <li data-s="2"><i>3</i>Rider is on the way</li>
+        <li data-s="3"><i>4</i>Delivered. Money released to seller</li>
+      </ul>
+      <button class="btn" id="advance" disabled>Waiting for order</button>
+      <button class="btn ghost" id="dispute" style="display:none">Report a problem</button>
+      <p id="msg" role="status" style="margin-top:12px;font-weight:700"></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>How escrow keeps you safe</h2>
+    <div class="howto">
+      <div class="card"><h3>You pay</h3><p class="meta">Your money goes to ChopNear, not straight to the seller.</p></div>
+      <div class="card"><h3>They deliver</h3><p class="meta">The seller cooks and a rider brings it. You can track each step.</p></div>
+      <div class="card"><h3>You confirm</h3><p class="meta">Tap confirm and the seller is paid. If something's wrong, report it and we hold the money.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="hire">
+  <div class="wrap two">
+    <div>
+      <h2>Hire a private chef</h2>
+      <p class="lead">Birthday, wedding, or a dinner at home. Tell us the details and a chef will reach out. Payment is held in escrow until the event is done.</p>
+    </div>
+    <form class="card" id="hireForm">
+      <label class="f">Chef<select id="hChef"></select></label>
+      <label class="f">Event date<input type="date" id="hDate" required></label>
+      <label class="f">Number of guests<input type="number" id="hGuests" min="1" value="10" required></label>
+      <label class="f">Budget (XAF)<input type="number" id="hBud" min="5000" step="1000" value="50000" required></label>
+      <button class="btn" type="submit">Request chef on WhatsApp</button>
+    </form>
+  </div>
+</section>
+
+<section id="sell">
+  <div class="wrap two">
+    <div>
+      <h2>Sell on ChopNear</h2>
+      <p class="lead">Got a restaurant, a roadside stand, a kitchen at home, or an online business? Register, list what you sell, and start taking orders. You don't need a shop. Private chefs can register too.</p>
+      <div class="card" id="authBox" style="margin-top:16px">
+        <strong id="who">You are not signed in</strong>
+        <form id="authForm" style="margin-top:10px">
+          <label class="f">Email<input id="ae" type="email" autocomplete="email" required></label>
+          <label class="f">Password (6+ characters)<input id="ap" type="password" autocomplete="current-password" minlength="6" required></label>
+          <label class="f">Your name (for new accounts)<input id="an" autocomplete="name"></label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn leaf" type="submit">Log in</button><button class="btn ghost" type="button" id="signup">Create account</button></div>
+        </form>
+        <button class="btn ghost" id="logout" style="display:none;margin-top:10px">Log out</button>
+        <p id="amsg" role="status" class="meta" style="margin-top:8px;font-weight:700"></p>
+      </div>
+    </div>
+    <form class="card" id="joinForm">
+      <div class="chips" role="radiogroup" aria-label="I am a">
+        <input type="radio" name="r" id="r1" value="Restaurant" checked><label for="r1">Restaurant</label>
+        <input type="radio" name="r" id="r2" value="Roadside vendor (no shop)"><label for="r2">Roadside vendor</label>
+        <input type="radio" name="r" id="r5" value="Online vendor (no shop)"><label for="r5">Online vendor</label>
+        <input type="radio" name="r" id="r3" value="Private chef"><label for="r3">Private chef</label>
+        <input type="radio" name="r" id="r4" value="Delivery rider"><label for="r4">Rider</label>
+      </div>
+      <label class="f">Your name or business<input id="jn" required></label>
+      <label class="f">Town<select id="jt"><option>Buea</option><option>Kumba</option><option>Limbe</option><option>Tiko</option></select></label>
+      <label class="f">Where can people find you?<input id="ja" required placeholder="Street, junction, or &quot;online only&quot;"></label>
+      <label class="f">What can customers order? One item per line with price<textarea id="jw" rows="4" placeholder="Grilled fish - 2500&#10;Suya - 1500"></textarea></label>
+      <label class="f">Your MoMo or Orange Money number (for payouts)<input id="jm" type="tel"></label>
+      <button class="btn leaf" type="submit">Register</button><p id="jmsg" role="status" style="font-weight:700">Log in first. Riders register on WhatsApp for now.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <strong>ChopNear</strong> · <a href="tel:+237675066547">+237 675 066 547</a> · <a href="mailto:izzykash007@gmail.com">izzykash007@gmail.com</a><br>
+    Concept preview. Listings marked Sample are examples. Payments and escrow are simulated.
+  </div>
+</footer>
+<a class="btn sticky" href="#near">See what's near me</a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const NUM='237675066547',$=id=>document.getElementById(id);
+const wa=t=>window.open('https://wa.me/'+NUM+'?text='+encodeURIComponent(t),'_blank');
+const fmt=n=>n.toLocaleString('en-US')+' XAF';
+const val=n=>document.querySelector('input[name='+n+']:checked').value;
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let places=[
+ {n:'Mount Cam Kitchen',t:'Restaurant',town:'Buea',d:.8,r:4.7,m:'25 min',dish:'Ndole and plantain',p:2500},
+ {n:'Mama Bih Roadside Suya',t:'Street vendor',town:'Buea',d:.4,r:4.8,m:'15 min',dish:'Beef suya (5 sticks)',p:1500},
+ {n:'Chef Neba',t:'Private chef',town:'Buea',d:1.6,r:4.9,m:'Book ahead',dish:'Home dinner for 4',p:40000},
+ {n:'Kumba Chop House',t:'Restaurant',town:'Kumba',d:1.0,r:4.6,m:'25 min',dish:'Eru and water fufu',p:2500},
+ {n:'Aunty Ngum Fish Stand',t:'Street vendor',town:'Kumba',d:.5,r:4.5,m:'15 min',dish:'Grilled fish',p:2800},
+ {n:'Chef Atem',t:'Private chef',town:'Kumba',d:2.2,r:4.8,m:'Book ahead',dish:'Event catering, per 10 guests',p:60000},
+ {n:'Seaside Grill',t:'Restaurant',town:'Limbe',d:.9,r:4.7,m:'30 min',dish:'Fresh fish and fries',p:3500},
+ {n:'Down Beach Roasted Fish',t:'Street vendor',town:'Limbe',d:.3,r:4.8,m:'15 min',dish:'Roasted fish',p:3000},
+ {n:'Chef Fon',t:'Private chef',town:'Limbe',d:1.8,r:4.9,m:'Book ahead',dish:'Beach dinner for 4',p:45000},
+ {n:'Tiko Pepper Soup Corner',t:'Restaurant',town:'Tiko',d:.7,r:4.6,m:'20 min',dish:'Catfish pepper soup',p:3000},
+ {n:'Sweet Crumbs (online orders)',t:'Online vendor',town:'Tiko',d:1.4,r:4.7,m:'Same day',dish:'Cake box (6 pieces)',p:4000},
+ {n:'Chef Ngwa',t:'Private chef',town:'Tiko',d:2.0,r:4.8,m:'Book ahead',dish:'Home dinner for 4',p:40000}
+];
+
+const cart=[];let state=-1;
+function render(){
+  const a=$('area').value,f=val('f');$('areaName').textContent=a;
+  const rows=places.filter(p=>p.town===a&&(f==='all'||(f==='vendor'?/vendor/.test(p.t):p.t===f))).sort((x,y)=>(x.sample===false?0:1)-(y.sample===false?0:1)||(x.d||0)-(y.d||0));
+  $('list').innerHTML=rows.map(p=>{const i=places.indexOf(p),c=p.t==='Private chef';
+    return '<article class="card item"><div class="top"><h3>'+esc(p.n)+'</h3><span class="tag '+(/vendor/.test(p.t)?'v':c?'c':'')+'">'+p.t+'</span></div>'
+    +'<div class="meta">'+(p.sample===false?esc(p.loc||p.town):p.d.toFixed(1)+' km away · ★ '+p.r+' · '+p.m+' · Sample')+'</div>'
+    +'<div class="dish"><span>'+esc(p.dish)+'<br><b>'+fmt(p.p)+'</b></span><button class="btn" data-i="'+i+'" data-c="'+(c?1:0)+'">'+(c?'Hire':'Add')+'</button></div></article>'}).join('');
+}
+$('list').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i;
+  if(b.dataset.c==='1'){$('hChef').value=places[i].n;$('hire').scrollIntoView({behavior:'smooth'});return}
+  if(state>=0)return;cart.push(i);cartDraw();$('order').scrollIntoView({behavior:'smooth'})});
+function cartDraw(){
+  const sub=cart.reduce((s,i)=>s+places[i].p,0),del=cart.length?500:0;
+  $('cartLines').innerHTML=cart.length?cart.map(i=>'<div class="row"><span>'+esc(places[i].dish)+'<br><small class="meta">'+esc(places[i].n)+'</small></span><b>'+fmt(places[i].p)+'</b></div>').join(''):'Your cart is empty. Add a dish above.';
+  $('del').textContent=fmt(del);$('tot').textContent=fmt(sub+del);$('pay').disabled=!cart.length||state>=0;
+}
+const labels=['Waiting for order','Mark: seller preparing','Mark: rider on the way','Confirm I got my food'];
+function steps(){
+  document.querySelectorAll('#steps li').forEach(li=>{const s=+li.dataset.s;li.className=s<state?'done':(s===state?'now done':'')});
+  if(state>=0&&state<3){$('advance').disabled=false;$('advance').textContent=['Demo: seller starts cooking','Demo: rider picks up','Demo: food arrives'][state]}
+}
+$('pay').addEventListener('click',()=>{state=0;$('pay').disabled=true;$('msg').textContent='Payment of '+$('tot').textContent+' is held in escrow. (Demo only: no real money moves.)';$('dispute').style.display='inline-block';steps()});
+$('advance').addEventListener('click',()=>{
+  if(state===2){state=3;document.querySelectorAll('#steps li').forEach(l=>l.className='done');
+    $('advance').textContent='Confirm I got my food';$('advance').dataset.stage='confirm';$('msg').textContent='Food delivered. Tap confirm to release the money.';return}
+  if(state===3){$('advance').disabled=true;$('advance').textContent='Money released';$('dispute').style.display='none';$('msg').textContent='Done. The seller has been paid. Enjoy your meal!';return}
+  state++;steps()});
+$('dispute').addEventListener('click',()=>{$('advance').disabled=true;$('msg').textContent='Problem reported. Your money stays in escrow while we check.'});
+function chefOpts(){$('hChef').innerHTML=places.filter(p=>p.t==='Private chef'&&p.town===$('area').value).map(p=>'<option>'+esc(p.n)+'</option>').join('')||'<option>Any chef</option>'}
+chefOpts();
+$('area').addEventListener('change',()=>{render();chefOpts()});
+document.querySelectorAll('input[name=f]').forEach(i=>i.addEventListener('change',render));
+$('hireForm').addEventListener('submit',e=>{e.preventDefault();
+  wa('Chef request (ChopNear)\nChef: '+$('hChef').value+'\nDate: '+$('hDate').value+'\nGuests: '+$('hGuests').value+'\nBudget: '+fmt(+$('hBud').value))});
+const SB_URL='https://tcqwsbwywjpxmkstmtry.supabase.co',SB_KEY='sb_publishable_shF-H67k6MTAwldRcuvc_Q_mwjZaYWD';
+const sb=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SB_URL,SB_KEY):null;
+const typeMap={'Restaurant':'restaurant','Roadside vendor (no shop)':'roadside_vendor','Online vendor (no shop)':'online_vendor','Private chef':'private_chef'};
+const typeLabel={restaurant:'Restaurant',roadside_vendor:'Street vendor',online_vendor:'Online vendor',private_chef:'Private chef'};
+const say=(id,t)=>{$(id).textContent=t};
+function parseMenu(t){return t.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const m=l.match(/^(.*?)[\s:\-–—]+(\d[\d,.]*)\s*(?:xaf|fcfa|f)?$/i);return m?{name:m[1].trim(),price_xaf:parseInt(m[2].replace(/[,.]/g,''),10)}:null}).filter(x=>x&&x.name&&x.price_xaf>0)}
+async function loadDb(){
+  if(!sb)return;
+  const {data,error}=await sb.from('vendors').select('id,name,type,town,location_note,menu_items(name,price_xaf,available)').eq('approved',true);
+  if(error||!data)return;
+  const real=data.filter(v=>v.menu_items&&v.menu_items.length).map(v=>{const m=v.menu_items.find(x=>x.available!==false)||v.menu_items[0];return{n:v.name,t:typeLabel[v.type],town:v.town,loc:v.location_note,sample:false,dish:m.name,p:m.price_xaf}});
+  places=places.filter(p=>p.sample!==false).concat(real);chefOpts();render();
+}
+async function ensureProfile(u){await sb.from('profiles').upsert({id:u.id,full_name:(u.user_metadata&&u.user_metadata.full_name)||null})}
+function authUI(u){$('who').textContent=u?'Signed in as '+u.email:'You are not signed in';$('authForm').style.display=u?'none':'grid';$('logout').style.display=u?'inline-block':'none'}
+if(sb){
+  sb.auth.getSession().then(r=>authUI(r.data.session&&r.data.session.user));
+  sb.auth.onAuthStateChange((ev,sess)=>{authUI(sess&&sess.user);if(sess&&sess.user)ensureProfile(sess.user)});
+}
+$('authForm').addEventListener('submit',async e=>{e.preventDefault();
+  if(!sb)return say('amsg','Database is not available right now.');
+  const r=await sb.auth.signInWithPassword({email:$('ae').value.trim(),password:$('ap').value});
+  say('amsg',r.error?r.error.message:'Logged in.')});
+$('signup').addEventListener('click',async()=>{
+  if(!sb)return say('amsg','Database is not available right now.');
+  const email=$('ae').value.trim(),password=$('ap').value;
+  if(!email||password.length<6)return say('amsg','Enter an email and a password of 6 or more characters.');
+  const r=await sb.auth.signUp({email,password,options:{data:{full_name:$('an').value.trim()}}});
+  say('amsg',r.error?r.error.message:(r.data.session?'Account created. You are signed in.':'Account created. Check your email to confirm, then log in.'))});
+$('logout').addEventListener('click',async()=>{await sb.auth.signOut();say('amsg','Logged out.')});
+$('joinForm').addEventListener('submit',async e=>{e.preventDefault();
+  const role=val('r');
+  if(role==='Delivery rider'){wa('ChopNear rider registration\nName: '+$('jn').value+'\nTown: '+$('jt').value+'\nPhone/MoMo: '+($('jm').value||'-'));return}
+  if(!sb)return say('jmsg','Database is not available right now.');
+  const ses=(await sb.auth.getSession()).data.session;
+  if(!ses){say('jmsg','Please log in or create an account first (box above).');$('authBox').scrollIntoView({behavior:'smooth'});return}
+  const items=parseMenu($('jw').value);
+  if($('jw').value.trim()&&!items.length)return say('jmsg','Write each item on its own line with a price, like: Grilled fish - 2500');
+  say('jmsg','Saving...');
+  const ins=await sb.from('vendors').insert({owner_id:ses.user.id,type:typeMap[role],name:$('jn').value.trim(),town:$('jt').value,location_note:$('ja').value.trim(),payout_number:$('jm').value.trim()||null}).select('id').single();
+  if(ins.error)return say('jmsg','Could not save: '+ins.error.message);
+  if(items.length){const mi=await sb.from('menu_items').insert(items.map(i=>({vendor_id:ins.data.id,name:i.name,price_xaf:i.price_xaf})));
+    if(mi.error)return say('jmsg','Registered, but the menu failed: '+mi.error.message)}
+  say('jmsg','Registered! Your listing will appear once we approve it.');$('joinForm').reset()});
+render();cartDraw();loadDb();
+</script>
+</body>
+</html>
