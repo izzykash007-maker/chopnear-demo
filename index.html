@@ -7,23 +7,41 @@
 <link rel="stylesheet" href="style.css"></head>
 <body>
 <div id="hdr"></div>
-<div class="hero"><div class="wrap">
-  <div><h1>Eat what your town cooks.</h1>
-  <p>Restaurants, roadside vendors, and private chefs in Buea, Kumba, Limbe, and Tiko. Your money stays in escrow until your food arrives.</p>
-  <div class="row"><a class="btn" href="order.html">Order food</a><a class="btn light" href="vendors.html">Sell on ChopNear</a></div></div>
-  <div id="heroArt"></div>
-</div></div>
+<div class="hero" id="slides" aria-roledescription="carousel" aria-label="Featured ways to eat">
+  <div class="slide"><div class="wrap">
+    <div><h1>Sit down. Eat in.</h1><p>Local restaurants in Buea, Kumba, Limbe, and Tiko. Eat in or have it delivered.</p><div class="row"><a class="btn" href="order.html">See restaurants</a><a class="btn light" href="vendors.html">Sell on ChopNear</a></div></div>
+    <div class="art big" data-k="restaurant" data-alt="Restaurant meal"></div>
+  </div></div>
+  <div class="slide"><div class="wrap">
+    <div><h1>Roadside favourites.</h1><p>Suya, roasted fish, and more from sellers with no shop. Fresh off the fire.</p><div class="row"><a class="btn" href="order.html">Find roadside food</a><a class="btn light" href="vendors.html">Sell on ChopNear</a></div></div>
+    <div class="art big" data-k="roadside" data-alt="Roadside suya stand"></div>
+  </div></div>
+  <div class="slide"><div class="wrap">
+    <div><h1>A chef at your table.</h1><p>Hire a private home chef for dinner or an event. Money held until the job is done.</p><div class="row"><a class="btn" href="order.html#hire">Hire a chef</a><a class="btn light" href="vendors.html">Sell on ChopNear</a></div></div>
+    <div class="art big" data-k="chef" data-alt="Home chef meal"></div>
+  </div></div>
+  <div class="slide"><div class="wrap">
+    <div><h1>Home cooking, delivered.</h1><p>Order from private vendors who cook at home and deliver to your door.</p><div class="row"><a class="btn" href="order.html">Order home food</a><a class="btn light" href="vendors.html">Sell on ChopNear</a></div></div>
+    <div class="art big" data-k="homedelivery" data-alt="Home delivery meal"></div>
+  </div></div>
+  <div class="wrap ctrl"><button class="ar" id="pv" aria-label="Previous slide">&lsaquo;</button><span id="dots"></span><button class="ar" id="nx" aria-label="Next slide">&rsaquo;</button><button class="pp" id="pp">Pause</button></div>
+</div>
 <main>
 <section><div class="wrap">
-  <h2>What people are eating</h2><p class="lead">Local favourites from every kind of kitchen. Illustrations for now, real photos coming.</p>
+  <h2>What would you like?</h2><p class="lead">Choose one and we will find sellers near you.</p>
   <div class="tiles">
-    <a class="tile" href="order.html"><div class="art" data-k="ndole" data-alt="Ndole"></div><span class="tag">Restaurant</span><h3>Ndole and plantain</h3><p>Bitterleaf stew with beef and fish.</p></a>
-    <a class="tile" href="order.html"><div class="art" data-k="suya" data-alt="Suya"></div><span class="tag">Roadside vendor</span><h3>Beef suya</h3><p>Grilled over fire, spiced with pepper.</p></a>
-    <a class="tile" href="order.html"><div class="art" data-k="pepper" data-alt="Pepper soup"></div><span class="tag">Restaurant</span><h3>Catfish pepper soup</h3><p>Hot, spicy, and made fresh.</p></a>
-    <a class="tile" href="order.html"><div class="art" data-k="fish" data-alt="Grilled fish"></div><span class="tag">Roadside vendor</span><h3>Roasted fish</h3><p>Straight from the beach in Limbe.</p></a>
-    <a class="tile" href="order.html"><div class="art" data-k="plantain" data-alt="Fried plantain"></div><span class="tag">Online vendor</span><h3>Fried plantain</h3><p>Sweet, golden, and ready to eat.</p></a>
-    <a class="tile" href="order.html#hire"><div class="art" data-k="eru" data-alt="Eru and fufu"></div><span class="tag">Private chef</span><h3>Eru and water fufu</h3><p>Hire a chef to cook it at your home.</p></a>
+    <a class="tile card" href="start.html?t=restaurant"><div class="art" data-k="restaurant" data-alt="Restaurants"></div><h3>Restaurants</h3><p>Eat in or get it delivered.</p></a>
+    <a class="tile card" href="start.html?t=roadside"><div class="art" data-k="roadside" data-alt="Roadside vendors"></div><h3>Roadside vendors</h3><p>Suya, fish, and more.</p></a>
+    <a class="tile card" href="start.html?t=online"><div class="art" data-k="homedelivery" data-alt="Online vendors"></div><h3>Online vendors</h3><p>Home cooks who deliver.</p></a>
+    <a class="tile card" href="start.html?t=chef"><div class="art" data-k="chef" data-alt="Private chefs"></div><h3>Private chefs</h3><p>Hire a chef for any occasion.</p></a>
   </div>
+</div></section>
+<section><div class="wrap">
+  <h2>Pick how you want to eat</h2>
+  <p class="lead">Swipe the cards or switch the tabs. Illustrations for now, real photos coming.</p>
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div class="tabs" id="sub" style="display:none"></div>
+  <div class="rail" id="rail" aria-live="polite"></div>
 </div></section>
 <div class="band"><div class="wrap stats">
   <div><b>4</b>Towns served</div><div><b>3</b>Ways to sell</div><div><b>100%</b>Escrow protected orders</div><div><b>0</b>Shops needed to start</div>
@@ -42,7 +60,55 @@
 </div></section>
 </main>
 <div id="ftr"></div>
+<script src="images.js"></script>
 <script src="app.js"></script>
-<script>document.getElementById('heroArt').innerHTML=DISH.scene</script>
+<script>
+DISH.achu=DISH.ndole;DISH.restaurant=DISH.ndole;DISH.roadside=DISH.scene;DISH.chef=DISH.eru;DISH.homedelivery=DISH.plantain;hydrateArt();
+/* slideshow */
+const sl=[...document.querySelectorAll('.slide')],dots=$('dots');let cur=0,timer=null;
+sl.forEach((x,i)=>{const d=document.createElement('button');d.setAttribute('aria-label','Slide '+(i+1));d.onclick=()=>go(i);dots.appendChild(d)});
+function go(i){cur=(i+sl.length)%sl.length;sl.forEach((x,j)=>x.classList.toggle('on',j===cur));[...dots.children].forEach((d,j)=>d.classList.toggle('on',j===cur))}
+function stop(){clearInterval(timer);timer=null;$('pp').textContent='Play'}
+function play(){clearInterval(timer);if(matchMedia('(prefers-reduced-motion: reduce)').matches)return stop();timer=setInterval(()=>go(cur+1),5000);$('pp').textContent='Pause'}
+$('pv').onclick=()=>go(cur-1);$('nx').onclick=()=>go(cur+1);$('pp').onclick=()=>timer?stop():play();
+go(0);play();
+/* category tabs */
+const fmt=n=>n.toLocaleString('en-US')+' XAF';
+const CATS={
+ restaurants:{label:'Restaurants',sub:true,items:[
+  {n:'Mount Cam Kitchen',t:'Buea',k:'achu',d:'Achu and yellow soup',p:3500,m:['eat','delivery']},
+  {n:'Seaside Grill',t:'Limbe',k:'fish',d:'Fresh fish and fries',p:3500,m:['eat']},
+  {n:'Pepper Soup Palace',t:'Tiko',k:'pepper',d:'Catfish pepper soup',p:3000,m:['delivery']},
+  {n:'Kumba Chop House',t:'Kumba',k:'eru',d:'Eru and water fufu',p:2500,m:['eat','delivery']}]},
+ roadside:{label:'Roadside food',items:[
+  {n:'Mama Bih Roadside Suya',t:'Buea',k:'suya',d:'Beef suya (5 sticks)',p:1500},
+  {n:'Down Beach Roasted Fish',t:'Limbe',k:'fish',d:'Roasted fish',p:3000},
+  {n:'Aunty Ngum Fish Stand',t:'Kumba',k:'fish',d:'Grilled fish',p:2800},
+  {n:'Market Mama Stew',t:'Buea',k:'roadside',d:'Stew with rice or spaghetti',p:1000}]},
+ chefs:{label:'Home chefs',cta:'Hire',from:1,items:[
+  {n:'Chef Neba',t:'Buea',k:'chef',d:'Plated achu dinner for 4',p:40000},
+  {n:'Chef Atem',t:'Kumba',k:'ndole',d:'Event catering, per 10 guests',p:60000},
+  {n:'Chef Fon',t:'Limbe',k:'fish',d:'Beach dinner for 4',p:45000}]},
+ delivery:{label:'Home delivery',items:[
+  {n:'Sweet Crumbs (online)',t:'Tiko',k:'plantain',d:'Fried plantain box',p:2000},
+  {n:'Auntie Ewi Home Kitchen',t:'Buea',k:'pepper',d:'Pepper soup, delivered',p:3000},
+  {n:'Mami Mary Cooks',t:'Kumba',k:'ndole',d:'Ndole and plantain, delivered',p:2500}]}
+};
+let cat='restaurants',mode='all';
+const tabs=$('tabs'),sub=$('sub'),rail=$('rail');
+function drawTabs(){
+  tabs.innerHTML=Object.keys(CATS).map(k=>'<button role="tab" aria-selected="'+(k===cat)+'" data-c="'+k+'">'+CATS[k].label+'</button>').join('');
+  sub.style.display=CATS[cat].sub?'flex':'none';
+  sub.innerHTML=[['all','Eat in or delivery'],['eat','Eat in'],['delivery','Delivery']].map(x=>'<button role="tab" aria-selected="'+(x[0]===mode)+'" data-m="'+x[0]+'">'+x[1]+'</button>').join('');
+}
+function drawRail(){
+  const c=CATS[cat];let items=c.items;
+  if(c.sub&&mode!=='all')items=items.filter(i=>i.m.includes(mode));
+  rail.innerHTML=items.map(i=>'<article class="tile"><div class="art" data-k="'+i.k+'" data-alt="'+esc(i.d)+'"></div><h3>'+esc(i.n)+'</h3><p>'+i.t+' · '+esc(i.d)+'</p><b>'+(c.from?'from ':'')+fmt(i.p)+'</b>'+(i.m?'<p>'+i.m.map(x=>x==='eat'?'Eat in':'Delivery').join(' · ')+'</p>':'')+'<a class="btn" href="'+(c.cta?'order.html#hire':'order.html')+'">'+(c.cta||'Order')+'</a></article>').join('')||'<p class="note">Nothing here yet.</p>';
+  hydrateArt();rail.scrollLeft=0;
+}
+tabs.onclick=e=>{const b=e.target.closest('button');if(!b)return;cat=b.dataset.c;mode='all';drawTabs();drawRail()};
+sub.onclick=e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;drawTabs();drawRail()};
+drawTabs();drawRail();
+</script>
 </body></html>
-
