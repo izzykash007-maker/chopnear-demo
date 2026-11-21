@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order food | ChopNear</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="style.css">
+<style>.step{display:none;padding:14px 0}.step.on{display:block}#map{height:340px;border-radius:18px;margin:14px 0;z-index:1}
+.opts{display:grid;gap:12px;margin-top:14px}@media(min-width:700px){.opts{grid-template-columns:repeat(2,1fr)}}
+.opt{text-align:left;cursor:pointer;font:inherit;display:grid;gap:4px}.opt:hover{border-color:var(--ink)}.opt b{font-family:Fraunces,serif;font-size:1.2rem}
+.eta{display:grid;gap:10px;grid-template-columns:1fr 1fr}.eta .card{text-align:center}.eta b{font-family:Fraunces,serif;font-size:1.6rem;display:block}
+.sum .row{justify-content:space-between}.steps{list-style:none;padding:0;display:grid;gap:10px;margin:16px 0}
+.steps li{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:#fff;border:1px solid var(--line)}
+.steps li.done{background:var(--leaf);color:#fff;border-color:var(--leaf)}</style></head>
+<body>
+<div id="hdr"></div>
+<main><div class="wrap" style="padding-top:22px;padding-bottom:50px">
+<button class="btn ghost" id="back" style="display:none;margin-bottom:6px">&larr; Back</button>
+
+<section class="step on" id="s0"><h2>What do you want today?</h2><p class="lead">Pick one. You can come back and try the others.</p>
+<div class="opts" id="types"></div></section>
+
+<section class="step" id="s1"><h2>Pick a Cameroonian delicacy</h2><div class="chips" id="dishes" style="margin-top:14px"></div></section>
+
+<section class="step" id="s2"><h2>Where are you?</h2><p class="lead">We use this to find sellers closest to you.</p>
+<div class="card" style="margin-top:14px;max-width:480px"><form id="locForm">
+<button class="btn leaf" type="button" id="gps">Use my current location</button>
+<label class="f">Or choose your town<select id="town"><option>Buea</option><option>Kumba</option><option>Limbe</option><option>Tiko</option></select></label>
+<button class="btn" type="submit">Find sellers near me</button><p class="note" id="locMsg"></p></form></div></section>
+
+<section class="step" id="s3"><h2 id="listH">Available near you</h2><div class="opts" id="list"></div></section>
+
+<section class="step" id="s4"><h2 id="modeH">How do you want it?</h2><div class="opts">
+<button class="card opt" id="mEat"><b>Come and eat</b><span class="note">See a live map, distance, and travel time.</span></button>
+<button class="card opt" id="mDel"><b>Home delivery</b><span class="note">We bring it to you. Your money stays in escrow.</span></button></div></section>
+
+<section class="step" id="s5"><h2 id="mapH">Directions</h2><div id="map"></div><div class="eta" id="eta"></div>
+<p class="note" id="mapNote"></p><p style="margin-top:12px"><button class="btn" id="toDel">Order delivery instead</button></p></section>
+
+<section class="step" id="s6"><h2 id="chefH">Chef</h2><p class="lead">Choose a service. The chef must accept before you pay.</p>
+<div class="chips" id="svcs" style="margin-top:14px"></div><p style="margin-top:14px"><button class="btn" id="reqChef" disabled>Send request</button></p></section>
+
+<section class="step" id="s7"><h2>Request sent</h2><p class="lead" id="waitTxt"></p><p style="margin-top:14px"><button class="btn leaf" id="accept">Demo: chef accepts</button></p></section>
+
+<section class="step" id="s8"><h2>Checkout</h2><div class="two"><div class="card sum" id="sum"></div>
+<form class="card" id="payForm"><label class="f" id="addrL">Delivery address<input id="addr" required placeholder="Street, landmark, town"></label>
+<label class="f">Phone number for payment<input id="ph" type="tel" required placeholder="6xx xxx xxx"></label>
+<div class="lab"><b>Pay with</b><div class="chips" style="margin-top:8px"><input type="radio" name="pm" id="p1" value="MTN MoMo" checked><label for="p1">MTN MoMo</label><input type="radio" name="pm" id="p2" value="Orange Money"><label for="p2">Orange Money</label><input type="radio" name="pm" id="p3" value="Crypto"><label for="p3">Crypto</label></div></div>
+<p class="note">Demo only: no real money moves. Real payments need a licensed provider, and crypto especially needs checking with a lawyer.</p>
+<button class="btn leaf" type="submit">Pay into escrow</button></form></div></section>
+
+<section class="step" id="s9"><h2>Your order is protected</h2><p class="lead" id="etaTxt"></p><ul class="steps" id="trk"></ul>
+<button class="btn" id="next">Demo: next step</button> <button class="btn ghost" id="rep" style="display:none">Report a problem</button><p id="tmsg" role="status" style="margin-top:12px;font-weight:700"></p></section>
+</div></main>
+<div id="ftr"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="app.js"></script>
+<script>
+const TOWN={Buea:[4.1534,9.2423],Kumba:[4.6363,9.4469],Limbe:[4.0186,9.2058],Tiko:[4.075,9.36]};
+const FOODS=['Ndolé','Achu and yellow soup','Eru and water fufu','Koki','Pepper soup','Suya','Roasted fish','Fried plantain','Jollof rice','Okok','Mbongo tchobi','Beignets and beans'];
+const TYPES={restaurant:['Restaurants','Eat in or get it delivered'],roadside:['Roadside vendors','Suya, fish, and more with no shop'],online:['Online vendors','Home cooks who deliver to you'],chef:['Private chefs','Hire a chef for dinner or an event']};
+const mk=(n,t,town,dy,dx,dishes,x)=>Object.assign({n,t,town,c:[TOWN[town][0]+dy,TOWN[town][1]+dx],dishes},x||{});
+const SV=[['Home dinner for 4',40000],['Event catering, per 10 guests',60000]];
+const PROV=[
+mk('Mount Cam Kitchen','restaurant','Buea',.006,.004,{'Ndolé':2500,'Achu and yellow soup':3500,'Koki':1500,'Jollof rice':2000}),
+mk('Bamenda Corner','restaurant','Buea',-.008,.006,{'Achu and yellow soup':3500,'Eru and water fufu':2800,'Pepper soup':3000}),
+mk('Kumba Chop House','restaurant','Kumba',.005,-.004,{'Eru and water fufu':2500,'Ndolé':2500,'Okok':2000,'Mbongo tchobi':3000}),
+mk('Seaside Grill','restaurant','Limbe',.004,.006,{'Roasted fish':3500,'Pepper soup':3000,'Fried plantain':1000,'Jollof rice':2000}),
+mk('Pepper Soup Palace','restaurant','Tiko',-.004,.005,{'Pepper soup':3000,'Mbongo tchobi':3000,'Koki':1500}),
+mk('Mama Bih Roadside Suya','roadside','Buea',.002,-.006,{'Suya':1500,'Fried plantain':1000}),
+mk('Down Beach Roasted Fish','roadside','Limbe',-.003,.004,{'Roasted fish':3000,'Fried plantain':1000}),
+mk('Aunty Ngum Fish Stand','roadside','Kumba',-.004,.003,{'Roasted fish':2800,'Beignets and beans':800}),
+mk('Corner Beignets','roadside','Tiko',.003,-.003,{'Beignets and beans':800,'Suya':1500}),
+mk('Sweet Crumbs (online)','online','Tiko',.002,.002,{'Fried plantain':2000,'Beignets and beans':1000}),
+mk('Auntie Ewi Home Kitchen','online','Buea',-.003,-.004,{'Ndolé':2800,'Koki':1500,'Okok':2000,'Jollof rice':2200}),
+mk('Mami Mary Cooks','online','Kumba',.003,.005,{'Eru and water fufu':2500,'Ndolé':2600,'Okok':2000}),
+mk('Limbe Home Plates','online','Limbe',-.005,-.003,{'Roasted fish':3200,'Jollof rice':2200,'Pepper soup':3000}),
+mk('Chef Neba','chef','Buea',.004,-.002,{},{svc:SV}),mk('Chef Atem','chef','Kumba',-.003,.004,{},{svc:SV}),
+mk('Chef Fon','chef','Limbe',.002,.005,{},{svc:[['Beach dinner for 4',45000],['Event catering, per 10 guests',65000]]}),mk('Chef Ngwa','chef','Tiko',-.002,-.004,{},{svc:SV})];
+const fmt=n=>n.toLocaleString('en-US')+' XAF';
+const hav=(a,b)=>{const r=Math.PI/180,x=(b[0]-a[0])*r,y=(b[1]-a[1])*r,h=Math.sin(x/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(y/2)**2;return 12742*Math.asin(Math.sqrt(h))};
+const S={};let hist=[0];
+function show(n){document.querySelectorAll('.step').forEach(x=>x.classList.toggle('on',x.id==='s'+n));$('back').style.display=hist.length>1?'inline-block':'none';window.scrollTo(0,0)}
+function go(n){hist.push(n);show(n)}
+$('back').onclick=()=>{hist.pop();show(hist[hist.length-1])};
+/* 0: type */
+$('types').innerHTML=Object.keys(TYPES).map(k=>'<button class="card opt" data-t="'+k+'"><b>'+TYPES[k][0]+'</b><span class="note">'+TYPES[k][1]+'</span></button>').join('');
+function pickType(t){S.type=t;if(t==='chef')go(2);else{$('dishes').innerHTML=FOODS.filter(f=>PROV.some(p=>p.t===t&&p.dishes[f])).map(f=>'<button type="button" data-f="'+f+'">'+f+'</button>').join('');go(1)}}
+$('types').onclick=e=>{const b=e.target.closest('button');if(b)pickType(b.dataset.t)};
+const q=new URLSearchParams(location.search).get('t');if(q&&TYPES[q])pickType(q);
+/* 1: dish */
+$('dishes').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.dish=b.dataset.f;go(2)};
+/* 2: location */
+$('gps').onclick=()=>{$('locMsg').textContent='Finding you...';navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{S.loc=[p.coords.latitude,p.coords.longitude];S.where='your location';$('locMsg').textContent='Got it.';list()},()=>$('locMsg').textContent='Could not get your location. Choose your town below.'):$('locMsg').textContent='Location is not available. Choose your town below.'};
+$('locForm').onsubmit=e=>{e.preventDefault();S.loc=TOWN[$('town').value];S.where=$('town').value;list()};
+/* 3: providers */
+function list(){
+  const rows=PROV.filter(p=>p.t===S.type&&(S.type==='chef'||p.dishes[S.dish])).map(p=>Object.assign({d:hav(S.loc,p.c)},p)).sort((a,b)=>a.d-b.d);
+  $('listH').textContent=(S.type==='chef'?'Chefs near ':(S.dish+' near '))+S.where;
+  $('list').innerHTML=rows.map((p,i)=>'<button class="card opt" data-i="'+PROV.indexOf(PROV.find(x=>x.n===p.n))+'"><b>'+esc(p.n)+'</b><span class="note">'+p.town+' · '+p.d.toFixed(1)+' km away · Sample listing</span><span>'+(p.t==='chef'?'From '+fmt(p.svc[0][1]):esc(S.dish)+' '+fmt(p.dishes[S.dish]))+'</span></button>').join('')||'<p class="note">No sellers here yet.</p>';
+  go(3);
+}
+$('list').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.p=PROV[+b.dataset.i];S.km=hav(S.loc,S.p.c);
+  if(S.type==='chef'){$('chefH').textContent=S.p.n;$('svcs').innerHTML=S.p.svc.map((s,i)=>'<button type="button" data-s="'+i+'">'+s[0]+' · '+fmt(s[1])+'</button>').join('');$('reqChef').disabled=true;go(6)}
+  else if(S.type==='online'){S.mode='del';go(8);checkout()}
+  else{$('modeH').textContent=S.p.n+': how do you want it?';go(4)}};
+/* 4: mode */
+$('mEat').onclick=()=>{go(5);drawMap()};
+$('mDel').onclick=()=>{S.mode='del';go(8);checkout()};
+$('toDel').onclick=()=>{S.mode='del';go(8);checkout()};
+/* 5: map and ETA */
+let map,grp;
+async function rt(prof,a,b){const r=await fetch('https://routing.openstreetmap.de/'+prof+'/route/v1/driving/'+a[1]+','+a[0]+';'+b[1]+','+b[0]+'?overview=full&geometries=geojson');const x=(await r.json()).routes[0];return{min:Math.round(x.duration/60),km:x.distance/1000,line:x.geometry.coordinates.map(c=>[c[1],c[0]])}}
+async function drawMap(){
+  $('mapH').textContent='Directions to '+S.p.n;
+  if(!map){map=L.map('map');L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map)}
+  if(grp)grp.remove();grp=L.layerGroup().addTo(map);
+  L.marker(S.loc).addTo(grp).bindPopup('You');L.marker(S.p.c).addTo(grp).bindPopup(S.p.n);
+  map.fitBounds([S.loc,S.p.c],{padding:[30,30]});setTimeout(()=>map.invalidateSize(),100);
+  let f,c,exact=true;
+  try{[f,c]=await Promise.all([rt('routed-foot',S.loc,S.p.c),rt('routed-car',S.loc,S.p.c)]);L.polyline(f.line,{color:'#1f7a4d',dashArray:'6 8'}).addTo(grp);L.polyline(c.line,{color:'#d6381f'}).addTo(grp)}
+  catch(e){exact=false;const k=S.km*1.3;f={min:Math.round(k/5*60),km:k};c={min:Math.round(k/30*60),km:k}}
+  $('eta').innerHTML='<div class="card"><b>'+f.min+' min</b>On foot · '+f.km.toFixed(1)+' km</div><div class="card"><b>'+c.min+' min</b>By vehicle · '+c.km.toFixed(1)+' km</div>';
+  $('mapNote').textContent=exact?'Green dashed line is walking. Red line is driving. Times are estimates.':'Live routing is unavailable. These are rough estimates from straight-line distance.';
+}
+/* 6-7: chef */
+$('svcs').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.svc=S.p.svc[+b.dataset.s];document.querySelectorAll('#svcs button').forEach(x=>x.style.background=x===b?'var(--ink)':'#fff');document.querySelectorAll('#svcs button').forEach(x=>x.style.color=x===b?'var(--paper)':'var(--ink)');$('reqChef').disabled=false};
+$('reqChef').onclick=()=>{$('waitTxt').textContent='We sent your request for '+S.svc[0]+' ('+fmt(S.svc[1])+') to '+S.p.n+'. You pay only after the chef accepts.';go(7)};
+$('accept').onclick=()=>{S.mode='chef';go(8);checkout()};
+/* 8: checkout */
+function checkout(){
+  const chef=S.mode==='chef';S.food=chef?S.svc[1]:S.p.dishes[S.dish];S.fee=chef?0:Math.round((500+150*Math.min(S.km,20))/50)*50;S.total=S.food+S.fee;
+  $('addrL').firstChild.textContent=chef?'Where should the chef come? ':'Delivery address';
+  $('sum').innerHTML='<h3>'+esc(S.p.n)+'</h3><div class="row"><span>'+esc(chef?S.svc[0]:S.dish)+'</span><b>'+fmt(S.food)+'</b></div>'+(chef?'':'<div class="row"><span>Delivery</span><b>'+fmt(S.fee)+'</b></div>')+'<div class="row" style="font-size:1.2rem;margin-top:8px"><b>Total</b><b>'+fmt(S.total)+'</b></div>';
+}
+$('payForm').onsubmit=e=>{e.preventDefault();S.pay=document.querySelector('input[name=pm]:checked').value;S.st=0;
+  const chef=S.mode==='chef',mins=Math.round((S.type==='online'?30:15)+Math.min(S.km,20)/20*60);
+  S.steps=chef?['Payment held in escrow','Chef confirmed and on the way','Service in progress','Done. Confirm to release your money']:['Payment held in escrow','Seller is preparing your food','Rider is on the way','Delivered. Confirm to release your money'];
+  $('etaTxt').textContent=chef?'Paid with '+S.pay+'. Your money is held until you confirm the service.':'Paid with '+S.pay+'. Estimated delivery in about '+mins+' minutes to '+$('addr').value+'.';
+  $('next').disabled=false;$('next').textContent='Demo: next step';$('rep').style.display='inline-block';$('tmsg').textContent=fmt(S.total)+' is held in escrow. (Demo only: no real money moves.)';trk();go(9)};
+function trk(){$('trk').innerHTML=S.steps.map((s,i)=>'<li class="'+(i<=S.st?'done':'')+'"><b>'+(i+1)+'</b>'+s+'</li>').join('')}
+$('next').onclick=()=>{if(S.st<3){S.st++;trk();if(S.st===3)$('next').textContent='I am satisfied: release payment'}else{$('next').disabled=true;$('rep').style.display='none';$('tmsg').textContent='Money released to '+S.p.n+'. Thank you!'}};
+$('rep').onclick=()=>{$('next').disabled=true;$('tmsg').textContent='Problem reported. Your money stays in escrow while we check.'};
+</script></body></html>
