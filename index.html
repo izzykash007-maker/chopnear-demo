@@ -7,11 +7,40 @@
 <link rel="stylesheet" href="style.css"></head>
 <body>
 <div id="hdr"></div>
+<!-- Full Screen Video Hero (Plays immediately after splash) -->
+<div class="hero-video-container">
+  <!-- Replace 'your-video.mp4' with a link to your actual video -->
+  <video autoplay muted loop playsinline poster="https://izzykash007-maker.github.io/chopnear-demo/images/food-bg.jpg">
+    <source src="https://assets.mixkit.co/videos/preview/mixkit-chef-cooking-in-a-pan-close-up-42388-large.mp4" type="video/mp4">
+  </video>
+  <div class="hero-video-overlay">
+    <div class="wrap">
+      <h1>Sit down. Eat in.</h1>
+      <p>Local restaurants in Buea, Kumba, Limbe, and Tiko. Eat in or have it delivered.</p>
+      <div class="row">
+        <a class="btn" href="explore.html">See restaurants</a>
+        <a class="btn light" href="vendors.html">Sell on ChopNearMe</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- The rest of the slideshow (The other 3 slides) -->
 <div class="hero" id="slides" aria-roledescription="carousel" aria-label="Featured ways to eat">
-  <div class="slide"><div class="wrap">
-    <div><h1>Sit down. Eat in.</h1><p>Local restaurants in Buea, Kumba, Limbe, and Tiko. Eat in or have it delivered.</p><div class="row"><a class="btn" href="explore.html">See restaurants</a><a class="btn light" href="vendors.html">Sell on ChopNearMe</a></div></div>
-    <div class="art big" data-k="restaurant" data-alt="Restaurant meal"></div>
+  <div class="slide on"><div class="wrap">
+    <div><h1>Roadside favourites.</h1><p>Suya, roasted fish, and more from sellers with no shop. Fresh off the fire.</p><div class="row"><a class="btn" href="explore.html">Find roadside food</a><a class="btn light" href="vendors.html">Sell on ChopNearMe</a></div></div>
+    <div class="art big" data-k="roadside" data-alt="Roadside suya stand"></div>
   </div></div>
+  <div class="slide"><div class="wrap">
+    <div><h1>A chef at your table.</h1><p>Hire a private home chef for dinner or an event. Money held until the job is done.</p><div class="row"><a class="btn" href="order.html#hire">Hire a chef</a><a class="btn light" href="vendors.html">Sell on ChopNearMe</a></div></div>
+    <div class="art big" data-k="chef" data-alt="Home chef meal"></div>
+  </div></div>
+  <div class="slide"><div class="wrap">
+    <div><h1>Home cooking, delivered.</h1><p>Order from private vendors who cook at home and deliver to your door.</p><div class="row"><a class="btn" href="explore.html">Order home food</a><a class="btn light" href="vendors.html">Sell on ChopNearMe</a></div></div>
+    <div class="art big" data-k="homedelivery" data-alt="Home delivery meal"></div>
+  </div></div>
+  <div class="wrap ctrl"><button class="ar" id="pv" aria-label="Previous slide">&lsaquo;</button><span id="dots"></span><button class="ar" id="nx" aria-label="Next slide">&rsaquo;</button><button class="pp" id="pp">Pause</button></div>
+</div>
   <div class="slide"><div class="wrap">
     <div><h1>Roadside favourites.</h1><p>Suya, roasted fish, and more from sellers with no shop. Fresh off the fire.</p><div class="row"><a class="btn" href="explore.html">Find roadside food</a><a class="btn light" href="vendors.html">Sell on ChopNearMe</a></div></div>
     <div class="art big" data-k="roadside" data-alt="Roadside suya stand"></div>
