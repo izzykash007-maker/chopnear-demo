@@ -75,7 +75,8 @@ function hydrateArt() {
   });
 }
 hydrateArt();
-
+/* Make sure the splash screen shows up */
+try { sessionStorage.removeItem('splash'); } catch (e) {}
 (function () {
   try { if (sessionStorage.getItem('splash')) return; sessionStorage.setItem('splash', '1') } catch (e) {}
   const red = matchMedia('(prefers-reduced-motion: reduce)').matches;
