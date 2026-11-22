@@ -4,7 +4,7 @@ const NUM='237675066547',wa=t=>window.open('https://wa.me/'+NUM+'?text='+encodeU
 const SB_URL='https://tcqwsbwywjpxmkstmtry.supabase.co',SB_KEY='sb_publishable_shF-H67k6MTAwldRcuvc_Q_mwjZaYWD';
 const sb=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SB_URL,SB_KEY):null;
 /* Header and footer shared by every page */
-const NAV=[['index.html','Home'],['explore.html','Find food'],['order.html','Order food'],['order.html#hire','Hire a chef'],['vendors.html','Sell on ChopNearMe']];
+const NAV=[['index.html','Home'],['explore.html','Find food'],['order.html','Order food'],['order.html#hire','Hire a chef'],['reviews.html','Reviews'],['vendors.html','Sell on ChopNearMe']];
 $('hdr').outerHTML='<header class="site"><div class="wrap bar"><a class="logo" href="index.html">Chop<b>NearMe</b></a><button class="burger" id="bg" aria-expanded="false">Menu</button><nav class="menu" id="mn">'+NAV.map(n=>'<a href="'+n[0]+'">'+n[1]+'</a>').join('')+'</nav></div></header>';
 $('bg').onclick=()=>{const o=$('mn').classList.toggle('open');$('bg').setAttribute('aria-expanded',o)};
 $('ftr').outerHTML='<footer class="site"><div class="wrap"><div class="cols"><div><b style="color:#fff;font-size:1.2rem">ChopNearMe</b><p>Food from kitchens, vendors, and chefs near you in Buea, Kumba, Limbe, and Tiko.</p></div><div><h4>Explore</h4>'+NAV.map(n=>'<a href="'+n[0]+'">'+n[1]+'</a>').join('')+'</div><div><h4>Contact</h4><a href="tel:+237675066547">+237 675 066 547</a><a href="mailto:izzykash007@gmail.com">izzykash007@gmail.com</a></div></div><p style="margin-top:22px;font-size:.85rem">Concept preview. Payments and escrow are simulated.</p></div></footer>';
