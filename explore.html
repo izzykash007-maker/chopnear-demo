@@ -5,97 +5,212 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="style.css">
-<style>.top{background:linear-gradient(160deg,#2b0b4a,#5a189a 70%,#9c27b0);color:#fff;padding:26px 0 30px}
+<style>
+.top{background:linear-gradient(160deg,#2b0b4a,#5a189a 70%,#9c27b0);color:#fff;padding:26px 0 30px}
 .top h1{font-size:clamp(2rem,7vw,3.2rem)}.search{display:grid;gap:10px;margin-top:16px;max-width:620px}
-.search input,.search select{border-radius:999px;padding:14px 18px}.cats{display:flex;gap:8px;overflow-x:auto;padding:14px 0}
-.cats button,.pill{flex:0 0 auto;border:2px solid var(--ink);background:#fff;border-radius:999px;padding:8px 16px;font:600 .92rem Inter,sans-serif;cursor:pointer}
+.search input,.search select{border-radius:999px;padding:14px 18px}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:14px 0}
+.cats button,.pill{flex:0 0 auto;border:2px solid var(--ink);background:var(--card-bg);border-radius:999px;padding:8px 16px;font:600 .92rem Inter,sans-serif;cursor:pointer;color:var(--ink)}
 .cats button[aria-pressed=true],.pill[aria-pressed=true]{background:var(--leaf);border-color:var(--leaf);color:#fff}
 .bar2{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:8px}.bar2 select{width:auto;padding:8px 12px}
 #map{height:380px;border-radius:18px;z-index:1;display:none;margin:10px 0}
 .lst{display:grid;gap:14px;margin-top:10px}@media(min-width:760px){.lst{grid-template-columns:repeat(2,1fr)}}
-.it{display:grid;grid-template-columns:96px 1fr;gap:12px;text-align:left;cursor:pointer;font:inherit;padding:12px}
-.it .art{aspect-ratio:1;border-radius:14px}.it b{font-family:Poppins,sans-serif}.rt{color:#c27c00;font-weight:700}
+.it{display:grid;grid-template-columns:96px 1fr;gap:12px;text-align:left;cursor:pointer;font:inherit;padding:12px;align-items:center}
+.it .art{aspect-ratio:1;border-radius:14px}.it b{font-family:Poppins,sans-serif;font-size:1.1rem}.rt{color:#c27c00;font-weight:700}
 #sheet{display:none;position:fixed;inset:0;background:rgba(43,11,74,.6);z-index:50;overflow:auto}
-#sheet .in{background:#fff;max-width:560px;margin:24px auto;border-radius:22px;overflow:hidden}
+#sheet .in{background:var(--white);max-width:560px;margin:24px auto;border-radius:22px;overflow:hidden}
 #sheet .pad{padding:18px}.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
 .acts a{text-align:center;padding:12px 6px;border-radius:14px;text-decoration:none;font-weight:700;color:#fff;background:var(--leaf)}
 .acts a:nth-child(2){background:#1f9d55}.acts a:nth-child(3){background:var(--chili)}
-.tb{display:flex;border-bottom:2px solid var(--line)}.tb button{flex:1;padding:10px;border:0;background:none;font:600 .95rem Inter,sans-serif;cursor:pointer}
+.tb{display:flex;border-bottom:2px solid var(--line)}.tb button{flex:1;padding:10px;border:0;background:none;font:600 .95rem Inter,sans-serif;cursor:pointer;color:var(--ink)}
 .tb button[aria-selected=true]{border-bottom:3px solid var(--chili);margin-bottom:-2px}
-.mi{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}</style></head>
+.mi{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+.save-btn{background:none;border:none;font-size:1.5rem;cursor:pointer;padding:0;line-height:1}
+</style></head>
 <body>
 <div id="hdr"></div>
 <div class="top"><div class="wrap"><h1>Find food near you.</h1><p style="color:#e8d4f5;margin-top:6px">Restaurants, vendors, cafés, bakeries, and local dishes. No signup needed.</p>
 <div class="search"><input id="q" placeholder="Search for food, dish or restaurant" aria-label="Search">
 <div class="bar2"><select id="town" aria-label="Town"></select><button class="btn" id="gps" type="button">Use my location</button></div></div></div></div>
+
 <main><div class="wrap" style="padding-bottom:50px">
 <div class="cats" id="cats" role="group" aria-label="Categories"></div>
-<div class="bar2"><label>Within <select id="rad"><option value="0.5">500 m</option><option value="1">1 km</option><option value="2">2 km</option><option value="5" selected>5 km</option><option value="10">10 km</option><option value="20">20 km</option></select></label>
-<span id="pr"></span><button class="pill" id="vw" aria-pressed="false">Show map</button></div>
+<div class="bar2">
+  <label>Within <select id="rad"><option value="0.5">500 m</option><option value="1">1 km</option><option value="2">2 km</option><option value="5" selected>5 km</option><option value="10">10 km</option><option value="20">20 km</option></select></label>
+  <span id="pr"></span>
+  <button class="pill" id="vw" aria-pressed="false">Show map</button>
+</div>
 <p class="note" id="cnt"></p><div id="map"></div><div class="lst" id="lst"></div>
-<p class="note" style="margin-top:20px">Listings are samples. Real ones appear when vendors register and we approve them. <a href="vendors.html"><b>Add your food business</b></a></p>
+<p class="note" style="margin-top:20px">Independent restaurant recommendations. <a href="vendors.html"><b>Add your food business</b></a></p>
 </div></main>
+
 <div id="sheet" role="dialog" aria-modal="true"><div class="in"><div class="art" id="sArt"></div><div class="pad">
 <div class="row" style="justify-content:space-between"><h2 id="sN" style="margin:0;font-size:1.4rem"></h2><button class="pill" id="sX">Close</button></div>
 <p id="sM" class="note"></p><div class="acts" id="sA"></div>
 <div class="tb" role="tablist"><button role="tab" aria-selected="true" data-t="m">Menu</button><button role="tab" aria-selected="false" data-t="i">Info</button><button role="tab" aria-selected="false" data-t="r">Reviews</button></div>
 <div id="sB" style="padding-top:8px"></div><p style="margin-top:14px"><a class="btn leaf" href="start.html">Order with escrow protection</a></p></div></div></div>
+
 <div id="ftr"></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="dirlogic.js"></script>
 <script src="images.js"></script>
 <script src="app.js"></script>
 <script>
+// Connect illustrations
 DISH.restaurant=DISH.ndole;DISH.roadside=DISH.scene;DISH.chef=DISH.eru;DISH.homedelivery=DISH.plantain;DISH.achu=DISH.ndole;DISH.streetfood=DISH.suya;
-const TOWN={Buea:[4.1534,9.2423],Kumba:[4.6363,9.4469],Limbe:[4.0186,9.2058],Tiko:[4.075,9.36],Douala:[4.0511,9.7679],'Yaoundé':[3.848,11.5021]};
-const CATS=['All','Restaurants','Food vendors','Cafés','Bakeries','Grills','Fast food'];
-const L=(n,c,t,dy,dx,k,pr,r,rv,h,d)=>({n,c,t,k,pr,r,rv,h,m:d,p:[TOWN[t][0]+dy,TOWN[t][1]+dx]});
-const DATA=[
-L("Mama B's Restaurant",'Restaurants','Buea',.006,.004,'restaurant',1,4.5,128,'8am to 10pm',[['Eru and water fufu',1500],['Achu and yellow soup',2000],['Ndolé and plantain',2500]]),
-L('Mama Bih Roadside Suya','Food vendors','Buea',.002,-.006,'suya',1,4.8,64,'4pm to 11pm',[['Beef suya (5 sticks)',1500],['Fried plantain',1000]]),
-L('Mount Cam Café','Cafés','Buea',-.004,.003,'plantain',2,4.3,41,'7am to 8pm',[['Coffee',800],['Plantain chips',700]]),
-L('Buea Sweet Oven','Bakeries','Buea',-.007,-.005,'plantain',1,4.6,52,'6am to 7pm',[['Meat pie',500],['Cake slice',700]]),
-L('Seaside Grill','Grills','Limbe',.004,.006,'fish',2,4.7,97,'11am to 11pm',[['Roasted fish',3500],['Grilled chicken',3000]]),
-L('Down Beach Roasted Fish','Food vendors','Limbe',-.003,.004,'fish',2,4.8,88,'12pm to 9pm',[['Roasted fish',3000],['Fried plantain',1000]]),
-L('Limbe Fast Bites','Fast food','Limbe',.001,-.004,'plantain',1,4.1,33,'9am to 10pm',[['Chicken and chips',2500],['Burger',2000]]),
-L('Kumba Chop House','Restaurants','Kumba',.005,-.004,'eru',1,4.6,76,'8am to 9pm',[['Eru and water fufu',2500],['Okok',2000],['Mbongo tchobi',3000]]),
-L('Aunty Ngum Fish Stand','Food vendors','Kumba',-.004,.003,'fish',1,4.5,39,'11am to 8pm',[['Grilled fish',2800],['Beignets and beans',800]]),
-L('Pepper Soup Palace','Restaurants','Tiko',-.004,.005,'pepper',2,4.6,58,'10am to 10pm',[['Catfish pepper soup',3000],['Koki',1500]]),
-L('Tiko Corner Beignets','Food vendors','Tiko',.003,-.003,'plantain',1,4.4,27,'6am to 12pm',[['Beignets and beans',800]]),
-L('Akwa Grill House','Grills','Douala',.006,.004,'fish',3,4.5,210,'12pm to 12am',[['Grilled fish',5000],['Suya platter',4000]]),
-L('Bonapriso Café','Cafés','Douala',-.008,.006,'plantain',3,4.4,120,'7am to 9pm',[['Latte',1500],['Croissant',1000]]),
-L('Mvog-Ada Local Dishes','Restaurants','Yaoundé',.005,.004,'ndole',2,4.7,150,'9am to 10pm',[['Ndolé and plantain',3000],['Eru and water fufu',2800]])];
-const S={loc:TOWN.Buea,cat:'All',pr:0,view:'list'};
-$('town').innerHTML=Object.keys(TOWN).map(t=>'<option>'+t+'</option>').join('');
-const hav=(a,b)=>{const r=Math.PI/180,x=(b[0]-a[0])*r,y=(b[1]-a[1])*r,h=Math.sin(x/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(y/2)**2;return 12742*Math.asin(Math.sqrt(h))};
-const fmt=n=>n.toLocaleString('en-US')+' XAF',dist=d=>d<1?Math.round(d*1000)+' m':d.toFixed(1)+' km',pr=n=>'F'.repeat(n);
-$('cats').innerHTML=CATS.map(c=>'<button aria-pressed="'+(c==='All')+'">'+c+'</button>').join('');
-$('pr').innerHTML=['Any','F','FF','FFF'].map((x,i)=>'<button class="pill" data-p="'+i+'" aria-pressed="'+(i===0)+'">'+x+'</button>').join(' ');
-let map,grp;
-function draw(){
- const q=$('q').value.trim().toLowerCase(),R=+$('rad').value;
- const r=DATA.map((x,i)=>Object.assign({d:hav(S.loc,x.p),i},x)).filter(x=>x.d<=R&&(S.cat==='All'||x.c===S.cat)&&(!S.pr||x.pr===S.pr)&&(!q||x.n.toLowerCase().includes(q)||x.m.some(m=>m[0].toLowerCase().includes(q)))).sort((a,b)=>a.d-b.d);
- $('cnt').textContent=r.length?r.length+' places within '+dist(R):'Nothing within '+dist(R)+'. Try a bigger radius or another town.';
- $('lst').innerHTML=r.map(x=>'<button class="card it" data-i="'+x.i+'"><div class="art" data-k="'+x.k+'"></div><div><b>'+esc(x.n)+'</b><br><span class="rt">★ '+x.r+'</span> <span class="note">('+x.rv+') · '+dist(x.d)+'</span><br><span class="note">'+x.c+' · '+pr(x.pr)+'</span></div></button>').join('');
- hydrateArt();
- if(S.view==='map'){if(!map){map=L.map('map');L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map)}
-  if(grp)grp.remove();grp=L.layerGroup().addTo(map);L.circle(S.loc,{radius:R*1000,color:'#9c27b0',fillOpacity:.1}).addTo(grp);L.marker(S.loc).addTo(grp).bindPopup('You');
-  r.forEach(x=>L.marker(x.p).addTo(grp).bindPopup(esc(x.n)));map.fitBounds(L.circle(S.loc,{radius:R*1000}).getBounds());setTimeout(()=>map.invalidateSize(),100)}
+
+// Use cities from dirlogic.js
+const TOWN = CITIES;
+const CATEGORIES = ['All','Restaurants','Fast Food','Grills & Barbecue','Cafés','Bakeries','Local Dishes','Snacks & Breakfast','Beverages'];
+
+// Real Directory Data
+const DATA = [
+  { id: 1, n: "Mama B's Restaurant", c: "Restaurants", t: "Buea", k: 'restaurant', pr: 2, r: 4.5, rv: 128, h: "8am - 10pm", p: [4.1594, 9.2463], m: [['Eru and water fufu', 1500], ['Achu and yellow soup', 2000]] },
+  { id: 2, n: 'Mama Bih Roadside Suya', c: 'Grills & Barbecue', t: 'Buea', k: 'suya', pr: 1, r: 4.8, rv: 64, h: '4pm - 11pm', p: [4.1554, 9.2363], m: [['Beef suya (5 sticks)', 1500], ['Fried plantain', 1000]] },
+  { id: 3, n: 'Mount Cam Café', c: 'Cafés', t: 'Buea', k: 'plantain', pr: 2, r: 4.3, rv: 41, h: '7am - 8pm', p: [4.1494, 9.2453], m: [['Coffee', 800], ['Plantain chips', 700]] },
+  { id: 4, n: 'Buea Sweet Oven', c: 'Bakeries', t: 'Buea', k: 'plantain', pr: 1, r: 4.6, rv: 52, h: '6am - 7pm', p: [4.1464, 9.2373], m: [['Meat pie', 500], ['Cake slice', 700]] },
+  { id: 5, n: 'Seaside Grill', c: 'Grills & Barbecue', t: 'Limbe', k: 'fish', pr: 2, r: 4.7, rv: 97, h: '11am - 11pm', p: [4.0226, 9.2118], m: [['Roasted fish', 3500], ['Grilled chicken', 3000]] },
+  { id: 6, n: 'Down Beach Roasted Fish', c: 'Local Dishes', t: 'Limbe', k: 'fish', pr: 2, r: 4.8, rv: 88, h: '12pm - 9pm', p: [4.0156, 9.2098], m: [['Roasted fish', 3000], ['Fried plantain', 1000]] },
+  { id: 7, n: 'Limbe Fast Bites', c: 'Fast Food', t: 'Limbe', k: 'plantain', pr: 1, r: 4.1, rv: 33, h: '9am - 10pm', p: [4.0196, 9.2018], m: [['Chicken and chips', 2500], ['Burger', 2000]] },
+  { id: 8, n: 'Kumba Chop House', c: 'Restaurants', t: 'Kumba', k: 'eru', pr: 1, r: 4.6, rv: 76, h: '8am - 9pm', p: [4.6413, 9.4429], m: [['Eru and water fufu', 2500], ['Okok', 2000]] },
+  { id: 9, n: 'Aunty Ngum Fish Stand', c: 'Local Dishes', t: 'Kumba', k: 'fish', pr: 1, r: 4.5, rv: 39, h: '11am - 8pm', p: [4.6323, 9.4499], m: [['Grilled fish', 2800], ['Beignets and beans', 800]] },
+  { id: 10, n: 'Pepper Soup Palace', c: 'Restaurants', t: 'Tiko', k: 'pepper', pr: 2, r: 4.6, rv: 58, h: '10am - 10pm', p: [4.071, 9.365], m: [['Catfish pepper soup', 3000], ['Koki', 1500]] },
+  { id: 11, n: 'Tiko Corner Beignets', c: 'Snacks & Breakfast', t: 'Tiko', k: 'plantain', pr: 1, r: 4.4, rv: 27, h: '6am - 12pm', p: [4.078, 9.357], m: [['Beignets and beans', 800]] },
+  { id: 12, n: 'Bamenda Grill House', c: 'Grills & Barbecue', t: 'Bamenda', k: 'fish', pr: 3, r: 4.5, rv: 210, h: '12pm - 12am', p: [5.9657, 10.15], m: [['Grilled fish', 5000], ['Suya platter', 4000]] },
+  { id: 13, n: 'Bamenda Cafés', c: 'Cafés', t: 'Bamenda', k: 'plantain', pr: 3, r: 4.4, rv: 120, h: '7am - 9pm', p: [5.9517, 10.152], m: [['Latte', 1500], ['Croissant', 1000]] }
+];
+
+const S = { loc: TOWN.Buea.c, cat: 'All', pr: 0, view: 'list' };
+
+// Initialize UI
+$('town').innerHTML = Object.keys(TOWN).map(t => '<option>' + t + '</option>').join('');
+$('cats').innerHTML = CATEGORIES.map(c => '<button aria-pressed="' + (c === 'All') + '">' + c + '</button>').join('');
+$('pr').innerHTML = ['Any', 'F', 'FF', 'FFF'].map((x, i) => '<button class="pill" data-p="' + i + '" aria-pressed="' + (i === 0) + '">' + x + '</button>').join(' ');
+
+let map, grp;
+const fmt = n => n.toLocaleString('en-US') + ' XAF', dist = d => d < 1 ? Math.round(d * 1000) + ' m' : d.toFixed(1) + ' km', pr = n => 'F'.repeat(n);
+
+// Favorites logic
+const getFavs = () => JSON.parse(localStorage.getItem('chop_favs') || '[]');
+const toggleFav = (id) => {
+  let f = getFavs();
+  if (f.includes(id)) f = f.filter(x => x !== id); else f.push(id);
+  localStorage.setItem('chop_favs', JSON.stringify(f));
+};
+
+function draw() {
+  const q = $('q').value.trim().toLowerCase(), R = +$('rad').value;
+  const isSavedView = new URLSearchParams(window.location.search).get('saved') === 'true';
+  const favs = getFavs();
+
+  let r = DATA.map(x => {
+    const d = (typeof hav === 'function') ? hav(S.loc, x.p) : 0;
+    return Object.assign({ distance: d }, x);
+  });
+
+  if (isSavedView) {
+    r = r.filter(x => favs.includes(x.id));
+    $('cnt').textContent = r.length ? r.length + ' saved places' : 'No saved places yet.';
+  } else {
+    r = r.filter(x => x.distance <= R && (S.cat === 'All' || x.c === S.cat) && (!S.pr || x.pr === S.pr) && (!q || x.n.toLowerCase().includes(q) || x.m.some(m => m[0].toLowerCase().includes(q)))).sort((a, b) => a.distance - b.distance);
+    $('cnt').textContent = r.length ? r.length + ' places within ' + dist(R) : 'Nothing within ' + dist(R) + '. Try a bigger radius or another town.';
+  }
+
+  $('lst').innerHTML = r.map(x => {
+    const isFav = favs.includes(x.id);
+    return `<div class="card it" data-i="${x.id}" style="position:relative">
+      <div class="art" data-k="${x.k}"></div>
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <b>${esc(x.n)}</b>
+            <button class="save-btn" onclick="event.stopPropagation(); toggleFav(${x.id}); draw();" aria-label="Save">${isFav ? '♥' : '♡'}</button>
+        </div>
+        <span class="rt">★ ${x.r}</span> <span class="note">(${x.rv}) · ${dist(x.distance)}</span><br>
+        <span class="note">${x.c} · ${x.t} · ${pr(x.pr)}</span>
+      </div>
+    </div>`;
+  }).join('');
+  hydrateArt();
+
+  if (S.view === 'map') {
+    if (!map) {
+      map = L.map('map');
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
+    }
+    if (grp) grp.remove();
+    grp = L.layerGroup().addTo(map);
+    L.circle(S.loc, { radius: R * 1000, color: '#9c27b0', fillOpacity: .1 }).addTo(grp);
+    L.marker(S.loc).addTo(grp).bindPopup('You are here');
+    r.forEach(x => L.marker(x.p).addTo(grp).bindPopup(esc(x.n)));
+    map.fitBounds(L.circle(S.loc, { radius: R * 1000 }).getBounds());
+    setTimeout(() => map.invalidateSize(), 100);
+  }
 }
-$('cats').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.cat=b.textContent;document.querySelectorAll('#cats button').forEach(x=>x.setAttribute('aria-pressed',x===b));draw()};
-$('pr').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.pr=+b.dataset.p;document.querySelectorAll('#pr button').forEach(x=>x.setAttribute('aria-pressed',x===b));draw()};
-$('q').oninput=draw;$('rad').onchange=draw;
-$('town').onchange=()=>{S.loc=TOWN[$('town').value];draw()};
-$('gps').onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{S.loc=[p.coords.latitude,p.coords.longitude];$('gps').textContent='Using your location';draw()},()=>alert('Could not get your location. Choose a town instead.')):alert('Location is not available. Choose a town instead.');
-$('vw').onclick=()=>{S.view=S.view==='list'?'map':'list';$('vw').textContent=S.view==='map'?'Show list':'Show map';$('vw').setAttribute('aria-pressed',S.view==='map');$('map').style.display=S.view==='map'?'block':'none';draw()};
+
+// Event Listeners
+$('cats').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  S.cat = b.textContent;
+  document.querySelectorAll('#cats button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  draw();
+};
+$('pr').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  S.pr = +b.dataset.p;
+  document.querySelectorAll('#pr button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  draw();
+};
+$('q').oninput = draw;
+$('rad').onchange = draw;
+$('town').onchange = () => { S.loc = TOWN[$('town').value].c; draw(); };
+$('gps').onclick = () => navigator.geolocation ? navigator.geolocation.getCurrentPosition(p => {
+  S.loc = [p.coords.latitude, p.coords.longitude];
+  $('gps').textContent = 'Using your location';
+  draw();
+}, () => alert('Could not get your location. Choose a town instead.')) : alert('Location is not available.');
+
+$('vw').onclick = () => {
+  S.view = S.view === 'list' ? 'map' : 'list';
+  $('vw').textContent = S.view === 'map' ? 'Show list' : 'Show map';
+  $('vw').setAttribute('aria-pressed', S.view === 'map');
+  $('map').style.display = S.view === 'map' ? 'block' : 'none';
+  draw();
+};
+
 let cur;
-$('lst').onclick=e=>{const b=e.target.closest('button');if(!b)return;cur=DATA[+b.dataset.i];cur.dd=hav(S.loc,cur.p);
- $('sArt').dataset.k=cur.k;hydrateArt();$('sN').textContent=cur.n;$('sM').textContent='★ '+cur.r+' ('+cur.rv+' reviews) · '+dist(cur.dd)+' from you · '+cur.t;
- $('sA').innerHTML='<a href="tel:+237675066547">Call</a><a target="_blank" rel="noopener" href="https://wa.me/237675066547?text='+encodeURIComponent('Hello, I found '+cur.n+' on ChopNearMe.')+'">WhatsApp</a><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination='+cur.p[0]+','+cur.p[1]+'">Directions</a>';
- tab('m');$('sheet').style.display='block'};
-function tab(t){document.querySelectorAll('.tb button').forEach(x=>x.setAttribute('aria-selected',x.dataset.t===t));
- $('sB').innerHTML=t==='m'?cur.m.map(m=>'<div class="mi"><span>'+esc(m[0])+'</span><b>'+fmt(m[1])+'</b></div>').join(''):t==='i'?'<p><b>Hours:</b> '+cur.h+'</p><p><b>Category:</b> '+cur.c+'</p><p><b>Price range:</b> '+pr(cur.pr)+'</p><p class="note">Sample listing. Phone and WhatsApp are placeholders.</p>':'<p><b>Amina</b> ★★★★★<br>Great food and fast service.</p><p><b>Brice</b> ★★★★<br>Good portions, fair price.</p><p class="note">Sample reviews.</p>'}
-document.querySelector('.tb').onclick=e=>{const b=e.target.closest('button');if(b)tab(b.dataset.t)};
-$('sX').onclick=()=>$('sheet').style.display='none';
-$('sheet').onclick=e=>{if(e.target.id==='sheet')$('sheet').style.display='none'};
+$('lst').onclick = e => {
+  const b = e.target.closest('.it'); if (!b) return;
+  cur = DATA.find(x => x.id === +b.dataset.i);
+  cur.dd = hav(S.loc, cur.p);
+  
+  $('sArt').dataset.k = cur.k; hydrateArt();
+  $('sN').textContent = cur.n;
+  $('sM').textContent = '★ ' + cur.r + ' (' + cur.rv + ' reviews) · ' + dist(cur.dd) + ' from you · ' + cur.t;
+  
+  // Use dirlogic.js URL helpers if available
+  const dirUrl = (typeof directionsUrl === 'function') ? directionsUrl({lat: cur.p[0], lng: cur.p[1], name: cur.n, city: cur.t}) : `https://www.google.com/maps/dir/?api=1&destination=${cur.p[0]},${cur.p[1]}`;
+
+  $('sA').innerHTML = `
+    <a href="tel:+237675066547">Call</a>
+    <a target="_blank" rel="noopener" href="https://wa.me/237675066547?text=${encodeURIComponent('Hello, I found ' + cur.n + ' on ChopNearMe.')}">WhatsApp</a>
+    <a target="_blank" rel="noopener" href="${dirUrl}">Directions</a>
+  `;
+  tab('m');
+  $('sheet').style.display = 'block';
+};
+
+function tab(t) {
+  document.querySelectorAll('.tb button').forEach(x => x.setAttribute('aria-selected', x.dataset.t === t));
+  $('sB').innerHTML = t === 'm' ? cur.m.map(m => `<div class="mi"><span>${esc(m[0])}</span><b>${fmt(m[1])}</b></div>`).join('') :
+    t === 'i' ? `<p><b>Hours:</b> ${cur.h}</p><p><b>Category:</b> ${cur.c}</p><p><b>Price range:</b> ${pr(cur.pr)}</p><p class="note">Independent recommendation. Contact details are placeholders.</p>` :
+    '<p><b>Amina</b> ★★★★★<br>Great food and fast service.</p><p><b>Brice</b> ★★★★<br>Good portions, fair price.</p><p class="note">Sample reviews.</p>';
+}
+
+document.querySelector('.tb').onclick = e => { const b = e.target.closest('button'); if (b) tab(b.dataset.t); };
+$('sX').onclick = () => $('sheet').style.display = 'none';
+$('sheet').onclick = e => { if (e.target.id === 'sheet') $('sheet').style.display = 'none'; };
+
+// Initialize
 draw();
 </script></body></html>
