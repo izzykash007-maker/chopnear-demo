@@ -49,3 +49,10 @@
   60% { opacity: 1; transform: scale(1.05); } /* Hold for 5s while slowly zooming */
   100% { opacity: 0; transform: scale(1.08); } /* 2s Fade Out */
 }
+/* Force text to be white in the hero section */
+.hero, .hero-video-overlay {
+  color: #ffffff !important;
+}
+.hero h1, .hero-video-overlay h1 {
+  color: #ffffff !important;
+}
