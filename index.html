@@ -100,9 +100,7 @@ const sl=[...document.querySelectorAll('.slide')],dots=$('dots');let cur=0,timer
 sl.forEach((x,i)=>{const d=document.createElement('button');d.setAttribute('aria-label','Slide '+(i+1));d.onclick=()=>go(i);dots.appendChild(d)});
 function go(i){cur=(i+sl.length)%sl.length;sl.forEach((x,j)=>x.classList.toggle('on',j===cur));[...dots.children].forEach((d,j)=>d.classList.toggle('on',j===cur))}
 function stop(){clearInterval(timer);timer=null;$('pp').textContent='Play'}
-function play(){clearInterval(timer);if(matchMedia('(prefers-reduced-motion: reduce)').matches)return stop();timer=setInterval(()=>go(cur+1),3000);$('pp').textContent='Pause'}
-$('pv').onclick=()=>go(cur-1);$('nx').onclick=()=>go(cur+1);$('pp').onclick=()=>timer?stop():play();
-go(0);play();
+function play(){clearInterval(timer);if(matchMedia('(prefers-reduced-motion: reduce)').matches)return stop();timer=setInterval(()=>go(cur+1),8000);$('pp').textContent='Pause'}
 
 /* category tabs */
 const fmt=n=>n.toLocaleString('en-US')+' XAF';
