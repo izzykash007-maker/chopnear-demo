@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sell on ChopNear | Register as a vendor, restaurant, or private chef</title>
+<title>Sell on ChopNearMe | Register as a vendor, restaurant, or private chef</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css"></head>
 <body>
 <div id="hdr"></div>
 <div class="hero"><div class="wrap">
-  <div><h1>Sell on ChopNear.</h1><p>No shop? No problem. Roadside sellers, online sellers, home cooks, restaurants, and private chefs can all register here.</p></div>
+  <div><h1>Sell on ChopNearMe.</h1><p>No shop? No problem. Roadside sellers, online sellers, home cooks, restaurants, and private chefs can all register here.</p></div>
   <div id="heroArt"></div>
 </div></div>
 <main>
@@ -68,7 +68,7 @@ $('signup').addEventListener('click',async()=>{if(!sb)return say('amsg','Databas
   say('amsg',r.error?r.error.message:(r.data.session?'Account created. You are signed in.':'Account created. Check your email to confirm, then log in.'))});
 $('logout').addEventListener('click',async()=>{await sb.auth.signOut();say('amsg','Logged out.')});
 $('joinForm').addEventListener('submit',async e=>{e.preventDefault();const role=val('r');
-  if(role==='Delivery rider'){wa('ChopNear rider registration\nName: '+$('jn').value+'\nTown: '+$('jt').value+'\nPhone/MoMo: '+($('jm').value||'-'));return}
+  if(role==='Delivery rider'){wa('ChopNearMe rider registration\nName: '+$('jn').value+'\nTown: '+$('jt').value+'\nPhone/MoMo: '+($('jm').value||'-'));return}
   if(!sb)return say('jmsg','Database is not available right now.');
   const ses=(await sb.auth.getSession()).data.session;
   if(!ses){say('jmsg','Please log in or create an account first (box on this page).');$('authBox').scrollIntoView({behavior:'smooth'});return}
