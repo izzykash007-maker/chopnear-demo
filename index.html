@@ -4,14 +4,15 @@
 <meta name="description" content="Order ndole, suya, pepper soup and more from restaurants, roadside vendors, and private chefs in Buea, Kumba, Limbe, and Tiko. Escrow protected.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css"></head>
+<link rel="stylesheet" href="style.css?v=3"></head>
 <body>
 <div id="hdr"></div>
-<!-- Full Screen Video Hero (Plays immediately after splash) -->
+
+<!-- Full Screen Video Hero -->
 <div class="hero-video-container">
-  <!-- Replace 'your-video.mp4' with a link to your actual video -->
-  <video autoplay muted loop playsinline poster="https://izzykash007-maker.github.io/chopnear-demo/images/food-bg.jpg">
+  <video autoplay muted loop playsinline>
     <source src="https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-cook-preparing-a-salad-42162-large.mp4" type="video/mp4">
+  </video>
   <div class="hero-video-overlay">
     <div class="wrap">
       <h1>Sit down. Eat in.</h1>
@@ -24,7 +25,7 @@
   </div>
 </div>
 
-<!-- The rest of the slideshow (The other 3 slides) -->
+<!-- The rest of the slideshow -->
 <div class="hero" id="slides" aria-roledescription="carousel" aria-label="Featured ways to eat">
   <div class="slide on"><div class="wrap">
     <div><h1>Roadside favourites.</h1><p>Suya, roasted fish, and more from sellers with no shop. Fresh off the fire.</p><div class="row"><a class="btn" href="explore.html">Find roadside food</a><a class="btn light" href="vendors.html">Sell on ChopNearMe</a></div></div>
@@ -40,20 +41,7 @@
   </div></div>
   <div class="wrap ctrl"><button class="ar" id="pv" aria-label="Previous slide">&lsaquo;</button><span id="dots"></span><button class="ar" id="nx" aria-label="Next slide">&rsaquo;</button><button class="pp" id="pp">Pause</button></div>
 </div>
-  <div class="slide"><div class="wrap">
-    <div><h1>Roadside favourites.</h1><p>Suya, roasted fish, and more from sellers with no shop. Fresh off the fire.</p><div class="row"><a class="btn" href="explore.html">Find roadside food</a><a class="btn light" href="vendors.html">Sell on ChopNearMe</a></div></div>
-    <div class="art big" data-k="roadside" data-alt="Roadside suya stand"></div>
-  </div></div>
-  <div class="slide"><div class="wrap">
-    <div><h1>A chef at your table.</h1><p>Hire a private home chef for dinner or an event. Money held until the job is done.</p><div class="row"><a class="btn" href="order.html#hire">Hire a chef</a><a class="btn light" href="vendors.html">Sell on ChopNearMe</a></div></div>
-    <div class="art big" data-k="chef" data-alt="Home chef meal"></div>
-  </div></div>
-  <div class="slide"><div class="wrap">
-    <div><h1>Home cooking, delivered.</h1><p>Order from private vendors who cook at home and deliver to your door.</p><div class="row"><a class="btn" href="explore.html">Order home food</a><a class="btn light" href="vendors.html">Sell on ChopNearMe</a></div></div>
-    <div class="art big" data-k="homedelivery" data-alt="Home delivery meal"></div>
-  </div></div>
-  <div class="wrap ctrl"><button class="ar" id="pv" aria-label="Previous slide">&lsaquo;</button><span id="dots"></span><button class="ar" id="nx" aria-label="Next slide">&rsaquo;</button><button class="pp" id="pp">Pause</button></div>
-</div>
+
 <main>
 <section><div class="wrap">
   <h2>What would you like?</h2><p class="lead">Choose one and we will find sellers near you.</p><p style="margin-top:12px"><a class="btn" href="explore.html">Find food near me</a></p>
@@ -100,6 +88,8 @@ sl.forEach((x,i)=>{const d=document.createElement('button');d.setAttribute('aria
 function go(i){cur=(i+sl.length)%sl.length;sl.forEach((x,j)=>x.classList.toggle('on',j===cur));[...dots.children].forEach((d,j)=>d.classList.toggle('on',j===cur))}
 function stop(){clearInterval(timer);timer=null;$('pp').textContent='Play'}
 function play(){clearInterval(timer);if(matchMedia('(prefers-reduced-motion: reduce)').matches)return stop();timer=setInterval(()=>go(cur+1),8000);$('pp').textContent='Pause'}
+$('pv').onclick=()=>go(cur-1);$('nx').onclick=()=>go(cur+1);$('pp').onclick=()=>timer?stop():play();
+go(0);play();
 
 /* category tabs */
 const fmt=n=>n.toLocaleString('en-US')+' XAF';
